@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 
 /**
@@ -21,6 +22,9 @@ public class CircleProgress extends View {
     private Paint paint;
     private int color_background= Color.BLUE;
     private RectF rect;
+    private int textColor = Color.GREEN;
+    private float textSize;
+    private Context context;
 
     public void setColor(int color) {
         this.color = color;
@@ -56,16 +60,18 @@ public class CircleProgress extends View {
 
     public CircleProgress(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        this.context = context;
+        init(context);
     }
 
-    private void init() {
+    private void init(Context context) {
         //初始化很多工具，参数
-
+        textSize= TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,16,context.getResources().getDisplayMetrics());
         paint = new Paint();
 //        paint.setColor(color);//画笔颜色
         paint.setStrokeWidth(strokeWidth);//设置画笔宽度
         paint.setStyle(style);//设置画笔样式，镂空还是填充
+        paint.setTextSize(textSize);
 
         //初始化圆形进度条位置矩形
         rect = new RectF(50,50,200,200);
@@ -89,6 +95,10 @@ public class CircleProgress extends View {
         int x = (int) (360*(progress/max));
 
         canvas.drawArc(rect,-90,x,false,paint);
+
+        paint.setColor(textColor);
+        canvas.drawText((int)(100*(progress/max))+"%",(float)getWidth()/2-textSize*3/2,(float)getHeight()/2-textSize/2,paint);
+
         this.invalidate();
         super.onDraw(canvas);
     }
